@@ -2,13 +2,15 @@ import asyncio
 import logging
 import os
 from datetime import datetime
+from aiohttp import web
 
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import CommandStart
 from aiogram.types import FSInputFile, InlineKeyboardButton, InputMediaPhoto
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-BOT_TOKEN = os.getenv("8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgEnY0rjOc") or "8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgEnY0rjOc"
+# Вставь свой настоящий токен или задай переменную окружения BOT_TOKEN на Render
+BOT_TOKEN = os.getenv("BOT_TOKEN") or "8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgENY0rjOc"
 
 PHOTO_MENU = "menu_banner.png"
 PHOTO_SCRIPT = "script.png"
@@ -20,6 +22,10 @@ logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
+
+# Обработчик проверки здоровья для Render (Health Check)
+async def handle_ping(request):
+    return web.Response(text="Bot is running!")
 
 STARS_PLANS = {
     "stars_7": ("7 дней", 50),
@@ -58,8 +64,8 @@ def main_menu_kb():
         InlineKeyboardButton(text="Скрипт 📄", callback_data="show_script"),
         InlineKeyboardButton(text="Купить ключ 💵", callback_data="buy_key"),
     )
-    b.row(InlineKeyboardButton(text="Отзывы ⭐ ", url="https://t.me/OTZIVImKITI"))
-    b.row(InlineKeyboardButton(text="Поддержка 💬 ", url="https://t.me/manager_kiti"))
+    b.row(InlineKeyboardButton(text="Отзывы ⭐ ↗", url="https://t.me/OTZIVImKITI"))
+    b.row(InlineKeyboardButton(text="Поддержка 💬 ↗", url="https://t.me/manager_kiti"))
     return b.as_markup()
 
 
@@ -211,6 +217,16 @@ async def back_main(callback: types.CallbackQuery):
 
 
 async def main():
+    # Запуск микро веб-сервера для удовлетворения проверки Render
+    app = web.Application()
+    app.router.add_get("/", handle_ping)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.getenv("PORT", 10000))
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+
+    # Запуск поллинга Telegram бота
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
