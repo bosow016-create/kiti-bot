@@ -10,7 +10,7 @@ from aiogram.types import FSInputFile, InlineKeyboardButton, InputMediaPhoto
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 # Вставь свой настоящий токен или задай переменную окружения BOT_TOKEN на Render
-BOT_TOKEN = os.getenv("BOT_TOKEN") or "8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgENY0rjOc"
+BOT_TOKEN = os.getenv("8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgENY0rjOc") or "8838721828:AAH-KLaYLhzLsn5g5DnEhyc5mIgENY0rjOc"
 
 PHOTO_MENU = "menu_banner.png"
 PHOTO_SCRIPT = "script.png"
